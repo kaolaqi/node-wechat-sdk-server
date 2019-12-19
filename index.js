@@ -3,6 +3,15 @@ const api = require("./src/api");
 const path = require("path");
 const app = express();
 
+
+//设置服务器跨域权限
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  next();
+})
+
 require("run-middleware")(app);
 
 // accessToken 获取token

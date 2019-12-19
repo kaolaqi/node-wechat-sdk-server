@@ -1,5 +1,4 @@
 // node-cache 保存和获取缓存
-
 const NodeCache = require("node-cache");
 const myCache = new NodeCache({
     stdTTL: 7200, // 缓存过期时间
@@ -27,8 +26,6 @@ var getCache = function (key, callback) {
         callback();
     }
 };
-
-
 
 module.exports = {
     setCache,
