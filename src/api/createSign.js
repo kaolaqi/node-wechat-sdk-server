@@ -6,15 +6,14 @@
  * 3. nonceStr 必填，生成签名的随机串
  * 4. signature 必填，签名
  */
-const crypto = require('crypto');
-const config = require('../config/index');
+const crypto = require('crypto')
 
 // sha1加密
 function sha1(str) {
-    let shasum = crypto.createHash("sha1")
-    shasum.update(str)
-    str = shasum.digest("hex")
-    return str
+  const shasum = crypto.createHash('sha1')
+  shasum.update(str)
+  str = shasum.digest('hex')
+  return str
 }
 
 /**
@@ -22,7 +21,7 @@ function sha1(str) {
  * @return {字符串}
  */
 function createTimestamp() {
-    return parseInt(new Date().getTime() / 1000) + ''
+  return parseInt(new Date().getTime() / 1000) + ''
 }
 
 /**
@@ -30,7 +29,7 @@ function createTimestamp() {
  * @return {字符串}
  */
 function createNonceStr() {
-    return Math.random().toString(36).substr(2, 15)
+  return Math.random().toString(36).substr(2, 15)
 }
 
 /**
@@ -39,19 +38,19 @@ function createNonceStr() {
  * @return {字符串}    排序后生成字符串
  */
 function raw(args) {
-    var keys = Object.keys(args)
-    keys = keys.sort()
-    var newArgs = {}
-    keys.forEach(function (key) {
-        newArgs[key.toLowerCase()] = args[key]
-    })
+  var keys = Object.keys(args)
+  keys = keys.sort()
+  var newArgs = {}
+  keys.forEach(function(key) {
+    newArgs[key.toLowerCase()] = args[key]
+  })
 
-    var string = ''
-    for (var k in newArgs) {
-        string += '&' + k + '=' + newArgs[k]
-    }
-    string = string.substr(1)
-    return string
+  var string = ''
+  for (var k in newArgs) {
+    string += '&' + k + '=' + newArgs[k]
+  }
+  string = string.substr(1)
+  return string
 }
 
 
@@ -65,21 +64,21 @@ function raw(args) {
  *  使用URL键值对的格式（ 即key1 = value1 & key2 = value2…） 拼接成字符串string1。
  * 这里需要注意的是所有参数名均为小写字符。 对string1作sha1加密， 字段名和字段值都采用原始值， 不进行URL 转义。
  */
-module.exports = getSign = (params, res) => {
-    var ret = {
-        jsapi_ticket: params.ticket,
-        nonceStr: createNonceStr(),
-        timestamp: createTimestamp(),
-        url: params.url
-    };
-    console.log(params, ret);
-    var string = raw(ret)
-    ret.signature = sha1(string)
-    res.send({
-        jsapi_ticket: 'are you ok? it\'s crerate!',
-        nonceStr: ret.nonceStr,
-        timestamp: ret.timestamp,
-        url: ret.url,
-        signature: ret.signature
-    });
+module.exports = (params, res) => {
+  var ret = {
+    jsapi_ticket: params.ticket,
+    nonceStr: createNonceStr(),
+    timestamp: createTimestamp(),
+    url: params.url
+  }
+  console.log(params, ret)
+  var string = raw(ret)
+  ret.signature = sha1(string)
+  res.send({
+    jsapi_ticket: 'are you ok? it\'s crerate!',
+    nonceStr: ret.nonceStr,
+    timestamp: ret.timestamp,
+    url: ret.url,
+    signature: ret.signature
+  })
 }

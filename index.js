@@ -1,49 +1,60 @@
-const express = require("express");
-const api = require("./src/api");
-const path = require("path");
-const app = express();
+const express = require('express')
+const runNestMiddleware = require('run-middleware')
+const config = require('./src/config/index') // 配置数据
+const api = require('./src/api')
+const app = express()
 
+// 端口
+const port = config.serverPort || 3000
 
-//设置服务器跨域权限
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-  next();
+// 设置服务器跨域权限
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With')
+  res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
+  next()
 })
 
-require("run-middleware")(app);
+// 接口内部嵌套连续调用中间件
+runNestMiddleware(app)
 
 // accessToken 获取token
-app.get('/getAccessToken', (req, res) => {
-  api.accessToken(req, res);
-});
+app.get('/wxsdk/getAccessToken', (req, res) => {
+  api.accessToken(req, res)
+})
 
 // 获取 jsapi_ticket 临时票据
-app.get("/getTicket", (req, res) => {
-  app.runMiddleware("/getAccessToken", function (code, body, headers) {
-    const result = JSON.parse(body);
-    console.log("User token:", result.access_token);
-    api.jsapiTicket(result.access_token, res);
-  });
-});
-
+app.get('/wxsdk/getTicket', (req, res) => {
+  app.runMiddleware('/wxsdk/getAccessToken', (code, body, headers) => {
+    const result = JSON.parse(body)
+    console.log('User token:', result.access_token)
+    api.jsapiTicket(result.access_token, res)
+  })
+})
 
 // 获取 jsapi_ticket 临时票据
-app.get('/getSdkSign', (req, res) => {
-  const params = {};
+app.get('/wxsdk/getSdkSign', (req, res) => {
+  const params = {}
   console.log(req.query)
-  params.url = req.query.url;
-  /***
+  params.url = req.query.url
+  /**
    * runMiddleware 请求别的 endPoint 获取 jsapi_ticket
    */
-  app.runMiddleware('/getTicket', function (code, body, headers) {
-    const result = JSON.parse(body);
-    console.log('User ticket:', result.ticket);
-    params.ticket = result.ticket;
-    api.createSign(params, res);
-  });
-});
+  app.runMiddleware('/wxsdk/getTicket', (code, body, headers) => {
+    const result = JSON.parse(body)
+    console.log('User ticket:', result.ticket)
+    params.ticket = result.ticket
+    api.createSign(params, res)
+  })
+})
 
-app.listen(3000);
-console.log("已在3000端口运行");
+// 微信公众平台配置校验 token 接口
+app.get('/wxsdk/checkToken', (req, res) => {
+  console.log(123123)
+  api.checkToken(req, res)
+})
+
+app.listen(port)
+
+console.log()
+console.log(`微信sdk服务已在${port}端口运行...`)

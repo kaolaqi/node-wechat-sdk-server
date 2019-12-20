@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>test</title>
+    <script src="//res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+</head>
+
+<body>
+    <h1>测试sdk</h1>
+    <button onclick="chooseImg()">choose Images</button>
+    <button onclick="shareLink()">share wechat</button>
+    <script>
+        function chooseImg() {
+            console.log(7777)
+            wx.chooseImage({
+                count: 1, // 默认9
+                sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                success: function (res) {
+                    var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    console.log(888, localIds)
+                    wx.uploadImage({
+                        localId: localIds, // 需要上传的图片的本地ID，由chooseImage接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            var serverId = res.serverId; // 返回图片的服务器端ID
+                            console.log(12345, serverId)
+                            alert(serverId)
+                        }
+                    });
+                }
+            });
+        }
+
+        function shareLink() {
+            console.log(1231231)
+            wx.onMenuShareAppMessage({
+                title: '分享标题', // 分享标题
+                desc: '分享描述', // 分享描述
+                link: 'http://lmq.frp.nglmq.com:8010/', // 分享链接
+                imgUrl: 'http://nglmq.com/images/avatar.jpg',
+                dataUrl: "",
+                type: "link"
+            });
+        }
+    </script>
+</body>
+
+</html>

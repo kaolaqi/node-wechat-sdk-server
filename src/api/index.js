@@ -1,9 +1,11 @@
-var accessToken = require("./accessToken")
-var jsapiTicket = require("./jsapiTicket")
-var createSign = require("./createSign")
+var accessToken = require('./accessToken')
+var jsapiTicket = require('./jsapiTicket')
+var createSign = require('./createSign')
+var checkToken = require('./checkToken')
 
 module.exports = {
-    accessToken,
-    jsapiTicket,
-    createSign
+  accessToken,
+  jsapiTicket,
+  createSign,
+  checkToken
 }
