@@ -54,6 +54,11 @@ app.get('/wxsdk/checkToken', (req, res) => {
   api.checkToken(req, res)
 })
 
+app.get('/wxsdk/smtp', (req, res) => {
+  const config = req.query
+  api.smtpEmail(config, res)
+})
+
 app.listen(port)
 
 console.log()
