@@ -70,7 +70,10 @@ export default function initWechatSdk(config = {}) {
           link: wxConfig.link, // 分享链接
           imgUrl: wxConfig.imgUrl,
           dataUrl: '',
-          type: 'link'
+          type: 'link',
+          success: function() {
+            console.log('执行分享')
+          }
         })
       })
     }
