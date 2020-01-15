@@ -64,21 +64,21 @@ function raw(args) {
  *  使用URL键值对的格式（ 即key1 = value1 & key2 = value2…） 拼接成字符串string1。
  * 这里需要注意的是所有参数名均为小写字符。 对string1作sha1加密， 字段名和字段值都采用原始值， 不进行URL 转义。
  */
-module.exports = (params, res) => {
+module.exports = (params) => {
   var ret = {
     jsapi_ticket: params.ticket,
     nonceStr: createNonceStr(),
     timestamp: createTimestamp(),
     url: params.url
   }
-  console.log(params, ret)
   var string = raw(ret)
   ret.signature = sha1(string)
-  res.send({
+
+  return {
     jsapi_ticket: 'are you ok? it\'s crerate!',
     nonceStr: ret.nonceStr,
     timestamp: ret.timestamp,
     url: ret.url,
     signature: ret.signature
-  })
+  }
 }

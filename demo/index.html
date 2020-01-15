@@ -13,6 +13,7 @@
     <h1>测试sdk</h1>
     <button onclick="chooseImg()">choose Images</button>
     <button onclick="shareLink()">share wechat</button>
+    <button onclick="weChatAuth()">wechat auth</button>
     <script>
         function chooseImg() {
             console.log(7777)
@@ -46,6 +47,11 @@
                 dataUrl: "",
                 type: "link"
             });
+        }
+
+        function weChatAuth(){
+            console.log('微信授权操作')
+            // window.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect'
         }
     </script>
 </body>

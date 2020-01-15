@@ -1,8 +1,8 @@
 const express = require('express')
-const runNestMiddleware = require('run-middleware')
 const config = require('./src/config/index') // 配置数据
 const api = require('./src/api')
 const app = express()
+const configBase = require('./src/config/index') // 配置数据
 
 // 端口
 const port = config.serverPort || 3000
@@ -15,45 +15,51 @@ app.use((req, res, next) => {
   next()
 })
 
-// 接口内部嵌套连续调用中间件
-runNestMiddleware(app)
-
-// accessToken 获取token
-app.get('/wxsdk/getAccessToken', (req, res) => {
-  api.accessToken(req, res)
-})
-
-// 获取 jsapi_ticket 临时票据
-app.get('/wxsdk/getTicket', (req, res) => {
-  app.runMiddleware('/wxsdk/getAccessToken', (code, body, headers) => {
-    const result = JSON.parse(body)
-    console.log('User token:', result.access_token)
-    api.jsapiTicket(result.access_token, res)
-  })
-})
-
-// 获取 jsapi_ticket 临时票据
-app.get('/wxsdk/getSdkSign', (req, res) => {
+// 1. 获取微信的sdk签名信息接口
+app.get('/wxsdk/getSdkSign', async(req, res) => {
   const params = {}
-  console.log(req.query)
   params.url = req.query.url
-  /**
-   * runMiddleware 请求别的 endPoint 获取 jsapi_ticket
-   */
-  app.runMiddleware('/wxsdk/getTicket', (code, body, headers) => {
-    const result = JSON.parse(body)
-    console.log('User ticket:', result.ticket)
-    params.ticket = result.ticket
-    api.createSign(params, res)
-  })
+
+  // 获取微信的access_token参数
+  var { access_token } = await api.accessToken()
+  console.log('获取的access_token：', access_token)
+
+  // // 通过 access_token 获取微信的 jsapi_ticket 临时票据
+  var { ticket } = await api.jsapiTicket(access_token)
+  console.log('获取的jsapi_ticket：', ticket)
+
+  // 请求sign
+  params.ticket = ticket
+  var result = api.createSign(params)
+  res.send(result)
 })
 
-// 微信公众平台配置校验 token 接口
+// 2. 微信公众平台配置校验 token 接口
 app.get('/wxsdk/checkToken', (req, res) => {
   console.log(123123)
   api.checkToken(req, res)
 })
 
+// 3.微信网页认证
+app.get('/wxsdk/authUserInfo', (req, res) => {
+  const redirectUrl = `/getUserInfo`
+  const host = `http://127.0.0.1:3000`
+
+  var authorizeUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${configBase.appid}&redirect_uri=` + `${encodeURIComponent(host + redirectUrl)}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect`
+  console.log(123123, authorizeUrl)
+  res.writeHead(302, {
+    'location': authorizeUrl
+  })
+})
+
+app.get('/wxsdk/getUserInfo', (req, res) => {
+  console.log(23123123)
+  const config = req.query
+  console.log(config)
+})
+
+
+// 4.自动发送邮箱的服务接口
 app.get('/wxsdk/smtp', (req, res) => {
   const config = req.query
   api.smtpEmail(config, res)
