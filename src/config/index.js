@@ -9,9 +9,10 @@ module.exports = {
   // 系统配置
   serverPort: 3000, // sdk服务启动端口 选填，不传默认3000端口
   // serverHost: 'http://www.nglmq.com', // sdk服务运行的服务器地址
-  serverHost: 'http://localhost:3000', // 本地运行npm run server, 启动本地的sdk服务运行的测试地址
+  // serverHost: 'http://localhost:3000', // 本地运行npm run server, 启动本地的sdk服务运行的测试地址
+  serverHost: 'http://sdk-server.frp.nglmq.com:8010', // 本地运行npm run server, 启动内网穿透的本地sdk服务运行的测试地址
 
   // smtp邮箱服务配置
-  emailAddress: '1540750371@qq.com', // sdk服务启动端口 选填，不传默认3000端口
-  smtpPassword: 'hsqixkanpufxgbeg' // sdk服务运行的服务器地址
+  emailAddress: '1540750371@qq.com', // smtp自动发送邮箱配置
+  smtpPassword: 'hsqixkanpufxgbeg' // smtp功能密匙
 }
