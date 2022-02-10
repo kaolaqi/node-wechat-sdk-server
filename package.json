@@ -35,7 +35,7 @@
     "html-css-scope-loader": "0.0.4",
     "html-webpack-plugin": "^3.2.0",
     "html-withimg-loader": "^0.1.16",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7.0.0",
     "ora": "^3.1.0",
     "eslint": "5.15.3",
     "eslint-plugin-vue": "5.2.2",
